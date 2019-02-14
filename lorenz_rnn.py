@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.optim as optim
-
+from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
 HIDDEN_SIZE = 16
 OUTPUT_SIZE = 3
@@ -59,7 +59,7 @@ hidden = Variable(torch.zeros(1, 1, HIDDEN_SIZE))
 inputs = Variable(inputs)
 targets = Variable(targets)
 
-for iter in range(101):
+for iter in range(1):
     output, hidden = model(inputs, hidden)
     hidden = hidden.detach()
 
@@ -78,9 +78,14 @@ for _ in range(inputs.shape[1]):
     input_point = input_point.view(1, 1, 3)
     (pred, hidden) = model(input_point, hidden)
     input_point = pred
-    predictions.append(pred.detach().numpy().ravel()[0])
-
+    predictions.append(pred.detach().numpy().ravel())
 inputs = inputs.data.numpy().ravel()
-ax = plt.axes(project='3d')
-ax.plot3D(predicitons[:, 0], predictions[:, 1], predictions[:, 2])
+predictions = np.asarray(predictions)
+print(predictions)
+print(predictions[:,0])
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
+plt.show()
 plt.savefig("out.png")
