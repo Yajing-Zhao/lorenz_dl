@@ -59,7 +59,7 @@ hidden = Variable(torch.zeros(1, 1, HIDDEN_SIZE))
 inputs = Variable(inputs)
 targets = Variable(targets)
 
-for iter in range(1):
+for iter in range(1000):
     output, hidden = model(inputs, hidden)
     hidden = hidden.detach()
 
@@ -89,3 +89,9 @@ ax = fig.gca(projection='3d')
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
 plt.savefig("out.png")
+
+fig1 = plt.figure()
+ax =fig.gca(projection = '3d')
+ax.plot(states[:,0], states[:,1], states[:,2])
+
+plt.savefig("out_exact.png")
