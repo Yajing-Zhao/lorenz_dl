@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -89,7 +90,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("out.png")
+plt.savefig("out_256_1001.png")
 
 print(states[:10])
 fig1 = plt.figure()
