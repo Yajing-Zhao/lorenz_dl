@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
-HIDDEN_SIZE = 64
+HIDDEN_SIZE = 128
 OUTPUT_SIZE = 3
 LR = 0.01
 
@@ -39,7 +39,7 @@ class RnnNet(nn.Module):
 
         self.rnn = nn.RNN(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
-                          num_layers = 1,
+                          num_layers = 2,
                           batch_first = True)
         """
         self.rnn2 = nn.RNN(input_size = HIDDEN_SIZE,
@@ -62,7 +62,7 @@ model = RnnNet()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), LR)
 
-hidden = Variable(torch.zeros(1,1,HIDDEN_SIZE))
+hidden = None
 inputs = Variable(inputs)
 targets = Variable(targets)
 
@@ -96,7 +96,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("64_rnn.png")
+plt.savefig("128_rnn_2l.png")
 
 print(states[:10])
 fig1 = plt.figure()

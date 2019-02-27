@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
-HIDDEN_SIZE = 64
+HIDDEN_SIZE = 128
 OUTPUT_SIZE = 3
 LR = 0.01
 
@@ -21,7 +21,7 @@ def f(state, t):
     sigma, rho, beta = para
     return sigma * (y - x), x * (rho - z) - y, x * y - beta * z
 # time points
-t_seq = np.arange(0, 25, 0.01)
+t_seq = np.arange(0, 40, 0.01)
 
 # initial values of x, y, z
 state0 = [1.0, 1.0, 1.0]
@@ -33,22 +33,23 @@ targets = torch.FloatTensor(states[1:]).view(1, states.shape[0] - 1, 3)
 print(states[:10])
 
 # Define the model
-class LSTMNet(nn.Module):
+class GRUNet(nn.Module):
     def __init__(self,):
-        super(LSTMNet, self).__init__()
+        super(GRUNet, self).__init__()
 
-        self.lstm = nn.LSTM(input_size = INPUT_SIZE,
+        self.gru = nn.GRU(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
                           num_layers = 2,
                           batch_first = True)
+        """
+        self.rnn2 = nn.RNN(input_size = HIDDEN_SIZE,
+                           hidden_size = HIDDEN_SIZE,
+                           num_layers = 1,
+                           batch_first = True)
+        """
         self.linear = nn.Linear(HIDDEN_SIZE, OUTPUT_SIZE)
-    def init_hidden(self):
-        # initialise h0 and c0
-        #return (torch.zeros(1, 1, HIDDEN_SIZE),
-         #       torch.zeros(1, 1, HIDDEN_SIZE))
-         return None
     def forward(self, x, hidden):
-        out, hidden = self.lstm(x, hidden)
+        out, hidden = self.gru(x,hidden)
         # [1,seq_len, h] => [seq_len, h]
         # out, hidden = self.rnn2(out1, hidden1)
         out = out.view(-1, HIDDEN_SIZE)
@@ -57,16 +58,18 @@ class LSTMNet(nn.Module):
         return out, hidden
 
 # Train the model
-model = LSTMNet()
+model = GRUNet()
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), LR)
+
+hidden = None
 inputs = Variable(inputs)
 targets = Variable(targets)
-hidden = None
 
 for iter in range(1001):
-    hidden = model.init_hidden()
+    
     output, hidden = model(inputs, hidden)
+    hidden = hidden.data
     loss = criterion(output, targets)
     model.zero_grad()
     loss.backward()
@@ -93,7 +96,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("64_LSTM_2l.png")
+plt.savefig("128_gru_2l.png")
 
 print(states[:10])
 fig1 = plt.figure()

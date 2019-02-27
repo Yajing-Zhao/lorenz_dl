@@ -33,40 +33,44 @@ targets = torch.FloatTensor(states[1:]).view(1, states.shape[0] - 1, 3)
 print(states[:10])
 
 # Define the model
-class LSTMNet(nn.Module):
+class RnnNet(nn.Module):
     def __init__(self,):
-        super(LSTMNet, self).__init__()
+        super(RnnNet, self).__init__()
 
-        self.lstm = nn.LSTM(input_size = INPUT_SIZE,
+        self.rnn = nn.RNN(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
-                          num_layers = 2,
+                          num_layers = 1,
                           batch_first = True)
+        """
+        self.rnn2 = nn.RNN(input_size = HIDDEN_SIZE,
+                           hidden_size = HIDDEN_SIZE,
+                           num_layers = 1,
+                           batch_first = True)
+        """
         self.linear = nn.Linear(HIDDEN_SIZE, OUTPUT_SIZE)
-    def init_hidden(self):
-        # initialise h0 and c0
-        #return (torch.zeros(1, 1, HIDDEN_SIZE),
-         #       torch.zeros(1, 1, HIDDEN_SIZE))
-         return None
     def forward(self, x, hidden):
-        out, hidden = self.lstm(x, hidden)
+        #out1, hidden1 = self.rnn(x,hidden)
         # [1,seq_len, h] => [seq_len, h]
-        # out, hidden = self.rnn2(out1, hidden1)
+        out, hidden = self.rnn(x, hidden)
         out = out.view(-1, HIDDEN_SIZE)
         out = self.linear(out) # [seq_len, h] => [seq_len, 1]
         out = out.unsqueeze(dim=0) #[seq_len, 1] => [1, seq_len, 1]
         return out, hidden
 
 # Train the model
-model = LSTMNet()
-criterion = nn.MSELoss()
+model = RnnNet()
+criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), LR)
+
+hidden = Variable(torch.zeros(1, 1, HIDDEN_SIZE))
+
 inputs = Variable(inputs)
 targets = Variable(targets)
-hidden = None
 
 for iter in range(1001):
-    hidden = model.init_hidden()
     output, hidden = model(inputs, hidden)
+    hidden = hidden.data
+
     loss = criterion(output, targets)
     model.zero_grad()
     loss.backward()
@@ -77,7 +81,7 @@ for iter in range(1001):
     
 # Give any initial point predict the following points and Visualize the result
 predictions = []
-input_point = inputs[:, 30, :]
+input_point = inputs[:, 0, :]
 for _ in range(inputs.shape[1]):
     input_point = input_point.view(1, 1, 3)
     (pred, hidden) = model(input_point, hidden)
@@ -93,7 +97,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("64_LSTM_2l.png")
+plt.savefig("out_64_1001-25_CEloss.png")
 
 print(states[:10])
 fig1 = plt.figure()
