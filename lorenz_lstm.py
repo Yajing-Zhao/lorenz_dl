@@ -61,13 +61,13 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), LR)
 inputs = Variable(inputs)
 targets = Variable(targets)
+hidden = model.init_hidden()
 
 for iter in range(1001):
-    hidden = model.init_hidden()
     output, hidden = model(inputs, hidden)
     loss = criterion(output, targets)
-    optimizer.zero_grad()
-    loss.backward()
+    model.zero_grad()
+    loss.backward(retain_graph = True)
     optimizer.step()
 
     if iter % 100 == 0:
@@ -91,7 +91,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("out_64_1001-25_LSTM.png")
+plt.savefig("64_LSTM.png")
 
 print(states[:10])
 fig1 = plt.figure()
