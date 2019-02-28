@@ -39,14 +39,13 @@ class LSTMNet(nn.Module):
 
         self.lstm = nn.LSTM(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
-                          num_layers = 2,
+                          num_layers = 1,
                           batch_first = True)
         self.linear = nn.Linear(HIDDEN_SIZE, OUTPUT_SIZE)
     def init_hidden(self):
         # initialise h0 and c0
-        #return (torch.zeros(1, 1, HIDDEN_SIZE),
-         #       torch.zeros(1, 1, HIDDEN_SIZE))
-         return None
+        return (torch.zeros(1, 1, HIDDEN_SIZE),
+                torch.zeros(1, 1, HIDDEN_SIZE))
     def forward(self, x, hidden):
         out, hidden = self.lstm(x, hidden)
         # [1,seq_len, h] => [seq_len, h]
@@ -62,7 +61,6 @@ criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), LR)
 inputs = Variable(inputs)
 targets = Variable(targets)
-hidden = None
 
 for iter in range(1001):
     hidden = model.init_hidden()
@@ -93,7 +91,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("64_LSTM_2l.png")
+plt.savefig("64_LSTM.png")
 
 print(states[:10])
 fig1 = plt.figure()

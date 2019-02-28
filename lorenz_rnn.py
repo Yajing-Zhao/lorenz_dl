@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
-HIDDEN_SIZE = 128
+HIDDEN_SIZE = 64
 OUTPUT_SIZE = 3
 LR = 0.01
 
@@ -39,7 +39,7 @@ class RnnNet(nn.Module):
 
         self.rnn = nn.RNN(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
-                          num_layers = 2,
+                          num_layers = 1,
                           batch_first = True)
         """
         self.rnn2 = nn.RNN(input_size = HIDDEN_SIZE,
@@ -81,7 +81,7 @@ for iter in range(1001):
 # Give any initial point predict the following points and Visualize the result
 predictions = []
 input_point = inputs[:, 30, :]
-for _ in range(inputs.shape[1]):
+for _ in range(2*inputs.shape[1]):
     input_point = input_point.view(1, 1, 3)
     (pred, hidden) = model(input_point, hidden)
     input_point = pred
@@ -96,7 +96,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("128_rnn_2l.png")
+plt.savefig("64_rnn_2p.png")
 
 print(states[:10])
 fig1 = plt.figure()
