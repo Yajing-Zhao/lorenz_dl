@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
-HIDDEN_SIZE = 64
+HIDDEN_SIZE = 128
 OUTPUT_SIZE = 3
 LR = 0.01
 
@@ -21,7 +21,7 @@ def f(state, t):
     sigma, rho, beta = para
     return sigma * (y - x), x * (rho - z) - y, x * y - beta * z
 # time points
-t_seq = np.arange(0, 25, 0.01)
+t_seq = np.arange(0, 40, 0.01)
 
 # initial values of x, y, z
 state0 = [1.0, 1.0, 1.0]
@@ -76,7 +76,7 @@ for iter in range(1001):
 # Give any initial point predict the following points and Visualize the result
 predictions = []
 input_point = inputs[:, 30, :]
-for _ in range(inputs.shape[1]):
+for _ in range(2*inputs.shape[1]):
     input_point = input_point.view(1, 1, 3)
     (pred, hidden) = model(input_point, hidden)
     input_point = pred
@@ -91,7 +91,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("64_LSTM.png")
+plt.savefig("128_LSTM.png")
 
 print(states[:10])
 fig1 = plt.figure()

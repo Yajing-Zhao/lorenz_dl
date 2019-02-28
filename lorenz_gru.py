@@ -81,7 +81,7 @@ for iter in range(1001):
 # Give any initial point predict the following points and Visualize the result
 predictions = []
 input_point = inputs[:, 30, :]
-for _ in range(inputs.shape[1]):
+for _ in range(2*inputs.shape[1]):
     input_point = input_point.view(1, 1, 3)
     (pred, hidden) = model(input_point, hidden)
     input_point = pred
