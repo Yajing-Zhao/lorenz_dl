@@ -8,7 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 from mpl_toolkits.mplot3d import Axes3D
 INPUT_SIZE = 3
-HIDDEN_SIZE = 256
+HIDDEN_SIZE = 128
 OUTPUT_SIZE = 3
 LR = 0.01
 
@@ -92,7 +92,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("256_lstm_2l.png")
+plt.savefig("128_lstm_2l.png")
 
 print(states[:10])
 fig1 = plt.figure()
