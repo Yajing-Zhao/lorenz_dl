@@ -39,7 +39,8 @@ class GRUNet(nn.Module):
 
         self.gru = nn.GRU(input_size = INPUT_SIZE,
                           hidden_size = HIDDEN_SIZE,
-                          num_layers = 2,
+                          num_layers = 1,
+                          #num_layers = 2,
                           batch_first = True)
         """
         self.rnn2 = nn.RNN(input_size = HIDDEN_SIZE,
@@ -96,7 +97,7 @@ ax = fig.gca(projection='3d')
 print(predictions.shape)
 ax.plot(predictions[:, 0], predictions[:, 1], predictions[:, 2])
 plt.show()
-plt.savefig("256_gru_2l.png")
+plt.savefig("256_gru.png")
 
 print(states[:10])
 fig1 = plt.figure()
